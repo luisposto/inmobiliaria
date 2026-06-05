@@ -1,0 +1,101 @@
+@font-face {
+  font-family: "icon-font";
+  src:
+    url("../fonts/icon-font/icon-font.woff2") format("woff2"),
+    url("../fonts/icon-font/icon-font.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+  font-family: "icon-font" !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-acciones:before { content: "\f2e3"; }
+.icon-aceptar:before { content: "\f633"; }
+.icon-agregar:before { content: "\f64d"; }
+.icon-ambientes:before { content: "\f3fc"; }
+.icon-balconterraza:before { content: "\f620"; }
+.icon-barrio:before { content: "\f54a"; }
+.icon-banos:before { content: "\f16f"; }
+.icon-buscar:before { content: "\f52a"; }
+.icon-calendario:before { content: "\f1f6"; }
+.icon-camara:before { content: "\f220"; }
+.icon-casa:before { content: "\f423"; }
+.icon-cochera:before { content: "\f7e1"; }
+.icon-compartir:before { content: "\f52e"; }
+.icon-comprar:before { content: "\f23a"; }
+.icon-configuracion:before { content: "\f890"; }
+.icon-consultas:before { content: "\f252"; }
+.icon-copiar:before { content: "\f759"; }
+.icon-cubierta:before { content: "\f45b"; }
+.icon-dashboard:before { content: "\f17e"; }
+.icon-descargar:before { content: "\f30a"; }
+.icon-destaque:before { content: "\f588"; }
+.icon-difusion:before { content: "\f484"; }
+.icon-disponibilidad:before { content: "\f1e2"; }
+.icon-dormitorios:before { content: "\f308"; }
+.icon-editar:before { content: "\f4cb"; }
+.icon-edificio:before { content: "\f876"; }
+.icon-electricidad:before { content: "\f46d"; }
+.icon-eliminar:before { content: "\f5de"; }
+.icon-email:before { content: "\f32f"; }
+.icon-empresa:before { content: "\f87c"; }
+.icon-enviar:before { content: "\f6c0"; }
+.icon-error:before { content: "\f33b"; }
+.icon-estadisticas:before { content: "\f673"; }
+.icon-expensas:before { content: "\f247"; }
+.icon-facebook:before { content: "\f344"; }
+.icon-favoritos:before { content: "\f417"; }
+.icon-filtros:before { content: "\f3ca"; }
+.icon-frente:before { content: "\f2d1"; }
+.icon-gas:before { content: "\f46b"; }
+.icon-gimnasio:before { content: "\f66b"; }
+.icon-guardar:before { content: "\f196"; }
+.icon-imagenes:before { content: "\f42b"; }
+.icon-inversion:before { content: "\f673"; }
+.icon-info:before { content: "\f431"; }
+.icon-instagram:before { content: "\f437"; }
+.icon-llaves:before { content: "\f44f"; }
+.icon-local:before { content: "\f542"; }
+.icon-lista:before { content: "\f479"; }
+.icon-mapa:before { content: "\f47f"; }
+.icon-notificaciones:before { content: "\f18a"; }
+.icon-orientacion:before { content: "\f2d1"; }
+.icon-parrilla:before { content: "\f7eb"; }
+.icon-pdf:before { content: "\f63e"; }
+.icon-perfil:before { content: "\f4e1"; }
+.icon-permisos:before { content: "\f52f"; }
+.icon-pileta:before { content: "\f617"; }
+.icon-plantas:before { content: "\f5e2"; }
+.icon-play:before { content: "\f4f5"; }
+.icon-premium:before { content: "\f2f1"; }
+.icon-propiedades:before { content: "\f8c5"; }
+.icon-propietario:before { content: "\f8c9"; }
+.icon-reservas:before { content: "\f19f"; }
+.icon-seguimiento:before { content: "\f1d6"; }
+.icon-seguridad:before { content: "\f893"; }
+.icon-superficie:before { content: "\f523"; }
+.icon-telefono:before { content: "\f5c1"; }
+.icon-terreno:before { content: "\f47f"; }
+.icon-totalconstruido:before { content: "\f876"; }
+.icon-ubicacion:before { content: "\f3e8"; }
+.icon-video:before { content: "\f21f"; }
+.icon-whatsapp:before { content: "\f618"; }
+.icon-wifi:before { content: "\f61c"; }
+.icon-x:before { content: "\f659"; }
+.icon-youtube:before { content: "\f62b"; }
+.icon-zona:before { content: "\f3e8"; }
+.icon-zonificacion:before { content: "\f54a"; }
+.icon-zoom-in:before { content: "\f62c"; }
+.icon-zoom-out:before { content: "\f62d"; }
