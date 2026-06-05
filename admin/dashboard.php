@@ -85,9 +85,6 @@ $queryString = http_build_query($filtros);
                         <p class="section-copy">Gestiona el inventario, exporta resultados y aplica filtros sin salir del panel.</p>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <a href="ciudades.php" class="btn-secondary">
-                            Ciudades y provincias
-                        </a>
                         <a href="../backend/export_propiedades_csv.php?<?= htmlspecialchars($queryString) ?>" class="btn-secondary">
                             Exportar CSV
                         </a>
