@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/funciones.php';
-requerirLogin();
+requerirPermisoAdmin('propiedades');
 
 // Tomamos mismos filtros que el dashboard
 $filtros = [

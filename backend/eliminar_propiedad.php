@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/funciones.php';
-requerirLogin();
+requerirPermisoAdmin('propiedades');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
