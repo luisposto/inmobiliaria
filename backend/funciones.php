@@ -36,6 +36,11 @@ function obtenerSeccionesAdmin(): array
             'nav_label' => 'Administrar staff',
             'route' => 'staff.php',
         ],
+        'ubicaciones' => [
+            'label' => 'Admin de ubicaciones',
+            'nav_label' => 'Ciudades y provincias',
+            'route' => 'ciudades.php',
+        ],
         'usuarios' => [
             'label' => 'Admin de usuarios',
             'nav_label' => 'Administrar usuarios',
@@ -1438,6 +1443,310 @@ function eliminarIconoCaracteristica(int $id): array
     return ['ok' => $ok];
 }
 
+function existeTablaProvincias(): bool
+{
+    static $cache = null;
+
+    if ($cache !== null) {
+        return $cache;
+    }
+
+    global $pdo;
+
+    try {
+        $stmt = $pdo->query("SHOW TABLES LIKE 'provincias'");
+        $cache = (bool) $stmt->fetchColumn();
+    } catch (Throwable $e) {
+        $cache = false;
+    }
+
+    return $cache;
+}
+
+function existeTablaCiudades(): bool
+{
+    static $cache = null;
+
+    if ($cache !== null) {
+        return $cache;
+    }
+
+    global $pdo;
+
+    try {
+        $stmt = $pdo->query("SHOW TABLES LIKE 'ciudades'");
+        $cache = (bool) $stmt->fetchColumn();
+    } catch (Throwable $e) {
+        $cache = false;
+    }
+
+    return $cache;
+}
+
+function obtenerProvincias(bool $incluirInactivas = true): array
+{
+    if (!existeTablaProvincias()) {
+        return [];
+    }
+
+    global $pdo;
+
+    $sql = "SELECT id, nombre, orden, activo
+            FROM provincias";
+    if (!$incluirInactivas) {
+        $sql .= " WHERE activo = 1";
+    }
+    $sql .= " ORDER BY orden ASC, nombre ASC, id ASC";
+
+    $stmt = $pdo->query($sql);
+    return $stmt->fetchAll() ?: [];
+}
+
+function obtenerProvinciaPorId(int $id): ?array
+{
+    if ($id <= 0 || !existeTablaProvincias()) {
+        return null;
+    }
+
+    global $pdo;
+    $stmt = $pdo->prepare(
+        "SELECT id, nombre, orden, activo
+         FROM provincias
+         WHERE id = ?
+         LIMIT 1"
+    );
+    $stmt->execute([$id]);
+    $row = $stmt->fetch();
+
+    return $row ?: null;
+}
+
+function obtenerCiudades(bool $incluirInactivas = true): array
+{
+    if (!existeTablaCiudades() || !existeTablaProvincias()) {
+        return [];
+    }
+
+    global $pdo;
+
+    $sql = "SELECT c.id, c.nombre, c.provincia_id, c.activo, c.created_at,
+                   p.nombre AS provincia_nombre, p.orden AS provincia_orden
+            FROM ciudades c
+            INNER JOIN provincias p ON p.id = c.provincia_id";
+    if (!$incluirInactivas) {
+        $sql .= " WHERE c.activo = 1";
+    }
+    $sql .= " ORDER BY p.orden ASC, p.nombre ASC, c.nombre ASC, c.id ASC";
+
+    $stmt = $pdo->query($sql);
+    return $stmt->fetchAll() ?: [];
+}
+
+function obtenerCiudadPorId(int $id): ?array
+{
+    if ($id <= 0 || !existeTablaCiudades() || !existeTablaProvincias()) {
+        return null;
+    }
+
+    global $pdo;
+    $stmt = $pdo->prepare(
+        "SELECT c.id, c.nombre, c.provincia_id, c.activo, c.created_at,
+                p.nombre AS provincia_nombre, p.orden AS provincia_orden
+         FROM ciudades c
+         INNER JOIN provincias p ON p.id = c.provincia_id
+         WHERE c.id = ?
+         LIMIT 1"
+    );
+    $stmt->execute([$id]);
+    $row = $stmt->fetch();
+
+    return $row ?: null;
+}
+
+function obtenerCiudadPorNombreYProvincia(string $nombreCiudad, string $nombreProvincia): ?array
+{
+    $nombreCiudad = normalizarNombreUbicacion($nombreCiudad);
+    $nombreProvincia = normalizarNombreUbicacion($nombreProvincia);
+
+    if ($nombreCiudad === '' || $nombreProvincia === '' || !existeTablaCiudades() || !existeTablaProvincias()) {
+        return null;
+    }
+
+    global $pdo;
+    $stmt = $pdo->prepare(
+        "SELECT c.id, c.nombre, c.provincia_id, c.activo, c.created_at,
+                p.nombre AS provincia_nombre, p.orden AS provincia_orden
+         FROM ciudades c
+         INNER JOIN provincias p ON p.id = c.provincia_id
+         WHERE LOWER(c.nombre) = LOWER(:ciudad)
+           AND LOWER(p.nombre) = LOWER(:provincia)
+         LIMIT 1"
+    );
+    $stmt->execute([
+        ':ciudad' => $nombreCiudad,
+        ':provincia' => $nombreProvincia,
+    ]);
+    $row = $stmt->fetch();
+
+    return $row ?: null;
+}
+
+function normalizarNombreUbicacion(string $texto): string
+{
+    $texto = trim($texto);
+    $texto = preg_replace('/\s+/', ' ', $texto) ?? '';
+
+    return $texto;
+}
+
+function resolverUbicacionPropiedad(array $data): array
+{
+    $pais = trim((string) ($data['pais'] ?? 'Argentina'));
+    $ciudad = normalizarNombreUbicacion((string) ($data['ciudad'] ?? ''));
+    $provincia = normalizarNombreUbicacion((string) ($data['provincia'] ?? ''));
+    $ciudadId = isset($data['ciudad_id']) ? (int) $data['ciudad_id'] : 0;
+    $provinciaId = isset($data['provincia_id']) ? (int) $data['provincia_id'] : 0;
+
+    if ($ciudadId > 0) {
+        $ciudadRow = obtenerCiudadPorId($ciudadId);
+        if ($ciudadRow) {
+            $ciudad = (string) $ciudadRow['nombre'];
+            $provincia = (string) $ciudadRow['provincia_nombre'];
+            $provinciaId = (int) $ciudadRow['provincia_id'];
+        }
+    }
+
+    if ($provinciaId > 0 && $provincia === '') {
+        $provinciaRow = obtenerProvinciaPorId($provinciaId);
+        if ($provinciaRow) {
+            $provincia = (string) $provinciaRow['nombre'];
+        }
+    }
+
+    return [
+        'ciudad' => $ciudad,
+        'provincia' => $provincia,
+        'pais' => $pais !== '' ? $pais : 'Argentina',
+    ];
+}
+
+function prepararDatosCiudad(array $data, ?int $ignorarId = null): array
+{
+    $nombre = normalizarNombreUbicacion((string) ($data['nombre'] ?? ''));
+    $provinciaId = isset($data['provincia_id']) ? (int) $data['provincia_id'] : 0;
+    $activo = array_key_exists('activo', $data) ? (!empty($data['activo']) ? 1 : 0) : 1;
+
+    if ($nombre === '') {
+        return ['ok' => false, 'error' => 'missing_name'];
+    }
+
+    if (!existeTablaProvincias() || !existeTablaCiudades()) {
+        return ['ok' => false, 'error' => 'missing_table'];
+    }
+
+    if ($provinciaId <= 0) {
+        return ['ok' => false, 'error' => 'missing_province'];
+    }
+
+    $provincia = obtenerProvinciaPorId($provinciaId);
+    if (!$provincia) {
+        return ['ok' => false, 'error' => 'invalid_province'];
+    }
+
+    global $pdo;
+    $sql = "SELECT id
+            FROM ciudades
+            WHERE provincia_id = :provincia_id
+              AND LOWER(nombre) = LOWER(:nombre)";
+    $params = [
+        ':provincia_id' => $provinciaId,
+        ':nombre' => $nombre,
+    ];
+
+    if ($ignorarId !== null && $ignorarId > 0) {
+        $sql .= " AND id <> :id";
+        $params[':id'] = $ignorarId;
+    }
+
+    $stmt = $pdo->prepare($sql . " LIMIT 1");
+    $stmt->execute($params);
+    if ($stmt->fetch()) {
+        return ['ok' => false, 'error' => 'duplicate_city'];
+    }
+
+    return [
+        'ok' => true,
+        'nombre' => $nombre,
+        'provincia_id' => $provinciaId,
+        'activo' => $activo,
+    ];
+}
+
+function crearCiudad(array $data): array
+{
+    $payload = prepararDatosCiudad($data);
+    if (!$payload['ok']) {
+        return $payload;
+    }
+
+    global $pdo;
+    $stmt = $pdo->prepare(
+        "INSERT INTO ciudades (provincia_id, nombre, activo)
+         VALUES (:provincia_id, :nombre, :activo)"
+    );
+    $stmt->execute([
+        ':provincia_id' => $payload['provincia_id'],
+        ':nombre' => $payload['nombre'],
+        ':activo' => $payload['activo'],
+    ]);
+
+    return ['ok' => true, 'id' => (int) $pdo->lastInsertId()];
+}
+
+function actualizarCiudad(int $id, array $data): array
+{
+    $actual = obtenerCiudadPorId($id);
+    if (!$actual) {
+        return ['ok' => false, 'error' => 'not_found'];
+    }
+
+    $payload = prepararDatosCiudad($data, $id);
+    if (!$payload['ok']) {
+        return $payload;
+    }
+
+    global $pdo;
+    $stmt = $pdo->prepare(
+        "UPDATE ciudades
+         SET provincia_id = :provincia_id,
+             nombre = :nombre,
+             activo = :activo
+         WHERE id = :id"
+    );
+    $ok = $stmt->execute([
+        ':id' => $id,
+        ':provincia_id' => $payload['provincia_id'],
+        ':nombre' => $payload['nombre'],
+        ':activo' => $payload['activo'],
+    ]);
+
+    return ['ok' => $ok];
+}
+
+function eliminarCiudad(int $id): array
+{
+    $actual = obtenerCiudadPorId($id);
+    if (!$actual) {
+        return ['ok' => false, 'error' => 'not_found'];
+    }
+
+    global $pdo;
+    $stmt = $pdo->prepare("DELETE FROM ciudades WHERE id = ?");
+    $ok = $stmt->execute([$id]);
+
+    return ['ok' => $ok];
+}
+
 function existeTablaPropiedadCaracteristicas(): bool
 {
     static $cache = null;
@@ -1914,6 +2223,7 @@ function normalizarCoordenada($value): ?float
 function crearPropiedad(array $data, ?array $fileImagen = null, ?array $filesGaleria = null): int
 {
     global $pdo;
+    $ubicacion = resolverUbicacionPropiedad($data);
 
     $imagen = null;
     if ($fileImagen && isset($fileImagen['tmp_name']) && $fileImagen['tmp_name'] !== '') {
@@ -1941,9 +2251,9 @@ function crearPropiedad(array $data, ?array $fileImagen = null, ?array $filesGal
         ':precio'       => $data['precio'] ?? 0,
         ':precio_usd'   => $data['precio_usd'] ?? 0,
         ':direccion'    => $data['direccion'] ?? '',
-        ':ciudad'       => $data['ciudad'] ?? '',
-        ':provincia'    => $data['provincia'] ?? '',
-        ':pais'         => $data['pais'] ?? 'Argentina',
+        ':ciudad'       => $ubicacion['ciudad'],
+        ':provincia'    => $ubicacion['provincia'],
+        ':pais'         => $ubicacion['pais'],
         ':tipo_id'      => !empty($data['tipo_id']) ? (int)$data['tipo_id'] : null,
         ':operacion_id' => !empty($data['operacion_id']) ? (int)$data['operacion_id'] : null,
         ':estado_id'    => $estadoId,
@@ -1967,6 +2277,7 @@ function crearPropiedad(array $data, ?array $fileImagen = null, ?array $filesGal
 function actualizarPropiedad(int $id, array $data, ?array $fileImagen = null, ?array $filesGaleria = null): bool
 {
     global $pdo;
+    $ubicacion = resolverUbicacionPropiedad($data);
 
     $prop = obtenerPropiedadPorId($id);
     if (!$prop) return false;
@@ -2017,9 +2328,9 @@ function actualizarPropiedad(int $id, array $data, ?array $fileImagen = null, ?a
         ':precio'       => $data['precio'] ?? 0,
         ':precio_usd'   => $data['precio_usd'] ?? 0,
         ':direccion'    => $data['direccion'] ?? '',
-        ':ciudad'       => $data['ciudad'] ?? '',
-        ':provincia'    => $data['provincia'] ?? '',
-        ':pais'         => $data['pais'] ?? 'Argentina',
+        ':ciudad'       => $ubicacion['ciudad'],
+        ':provincia'    => $ubicacion['provincia'],
+        ':pais'         => $ubicacion['pais'],
         ':tipo_id'      => !empty($data['tipo_id']) ? (int)$data['tipo_id'] : null,
         ':operacion_id' => !empty($data['operacion_id']) ? (int)$data['operacion_id'] : null,
         ':estado_id'    => $estadoId,

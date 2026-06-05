@@ -7,6 +7,8 @@ $tipos = obtenerTiposPropiedad();
 $estados = obtenerEstadosPropiedad();
 $iconosCaracteristica = obtenerOpcionesIconosCaracteristica(true);
 $iconoCaracteristicaDefault = array_key_first($iconosCaracteristica) ?: 'check';
+$provincias = obtenerProvincias(false);
+$ciudades = obtenerCiudades(false);
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $prop = $id ? obtenerPropiedadPorId($id) : null;
@@ -19,6 +21,19 @@ $eliminacionGaleriaFallida = isset($_GET['gal_del']) && $_GET['gal_del'] === '0'
 if (!$prop) {
     header("Location: dashboard.php");
     exit;
+}
+
+$ciudadSeleccionada = obtenerCiudadPorNombreYProvincia((string) ($prop['ciudad'] ?? ''), (string) ($prop['provincia'] ?? ''));
+$provinciaSeleccionadaId = $ciudadSeleccionada ? (int) $ciudadSeleccionada['provincia_id'] : 0;
+$ciudadSeleccionadaId = $ciudadSeleccionada ? (int) $ciudadSeleccionada['id'] : 0;
+$ciudadesJson = [];
+foreach ($ciudades as $ciudad) {
+    $ciudadesJson[] = [
+        'id' => (int) $ciudad['id'],
+        'nombre' => (string) $ciudad['nombre'],
+        'provincia_id' => (int) $ciudad['provincia_id'],
+        'provincia_nombre' => (string) $ciudad['provincia_nombre'],
+    ];
 }
 ?>
 
@@ -114,11 +129,23 @@ if (!$prop) {
                 </div>
                 <div>
                     <label class="field-label">Ciudad</label>
-                    <input type="text" id="ciudad" name="ciudad" value="<?= htmlspecialchars($prop['ciudad']) ?>" class="field-input">
+                    <select id="ciudad_id" name="ciudad_id" class="field-input" <?= $provinciaSeleccionadaId > 0 ? '' : 'disabled' ?>>
+                        <option value="">Seleccionar ciudad</option>
+                    </select>
                 </div>
                 <div>
                     <label class="field-label">Provincia</label>
-                    <input type="text" id="provincia" name="provincia" value="<?= htmlspecialchars($prop['provincia']) ?>" class="field-input">
+                    <select id="provincia_id" name="provincia_id" class="field-input">
+                        <option value="">Seleccionar provincia</option>
+                        <?php foreach ($provincias as $provincia): ?>
+                            <option value="<?= (int) $provincia['id'] ?>" <?= $provinciaSeleccionadaId === (int) $provincia['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($provincia['nombre']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if (!$ciudadSeleccionada && (($prop['ciudad'] ?? '') !== '' || ($prop['provincia'] ?? '') !== '')): ?>
+                        <p class="mt-2 text-xs text-amber-700">La ubicacion guardada no coincide con el catalogo actual. Seleccionala nuevamente para normalizarla.</p>
+                    <?php endif; ?>
                 </div>
                 <div>
                     <label class="field-label">País</label>
@@ -335,13 +362,16 @@ if (!$prop) {
         const addFeatureButton = document.getElementById('add-feature');
         const deleteGalleryImageForm = document.getElementById('delete-gallery-image-form');
         const addressInput = document.getElementById('direccion');
-        const cityInput = document.getElementById('ciudad');
-        const provinceInput = document.getElementById('provincia');
+        const cityInput = document.getElementById('ciudad_id');
+        const provinceInput = document.getElementById('provincia_id');
         const countryInput = document.getElementById('pais');
         const latInput = document.getElementById('lat');
         const lngInput = document.getElementById('lng');
         const locateAddressButton = document.getElementById('locate-address');
         const mapStatus = document.getElementById('map-status');
+        const cityOptions = <?= json_encode($ciudadesJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+        const initialProvinceId = <?= json_encode($provinciaSeleccionadaId) ?>;
+        const initialCityId = <?= json_encode($ciudadSeleccionadaId) ?>;
         const defaultLat = -34.6037;
         const defaultLng = -58.3816;
         const initialLat = <?= json_encode($prop['lat'] !== null ? (float)$prop['lat'] : null) ?>;
@@ -383,11 +413,34 @@ if (!$prop) {
             map.setView(position, zoom);
         }
 
+        function getSelectedOptionText(select) {
+            return select?.options?.[select.selectedIndex]?.text?.trim() || '';
+        }
+
+        function populateCities(selectedProvinceId, selectedCityId = '') {
+            const targetCityId = selectedCityId || cityInput.value;
+            cityInput.innerHTML = '<option value="">Seleccionar ciudad</option>';
+
+            const filteredCities = cityOptions.filter((city) => String(city.provincia_id) === String(selectedProvinceId));
+            filteredCities.forEach((city) => {
+                const option = document.createElement('option');
+                option.value = String(city.id);
+                option.textContent = city.nombre;
+                option.selected = String(city.id) === String(targetCityId);
+                cityInput.appendChild(option);
+            });
+
+            cityInput.disabled = filteredCities.length === 0;
+            if (!filteredCities.length) {
+                cityInput.value = '';
+            }
+        }
+
         function buildAddressQuery() {
             return [
                 addressInput.value,
-                cityInput.value,
-                provinceInput.value,
+                getSelectedOptionText(cityInput),
+                getSelectedOptionText(provinceInput),
                 countryInput.value
             ]
                 .map((value) => value.trim())
@@ -463,6 +516,7 @@ if (!$prop) {
 
         addFeatureButton.addEventListener('click', () => addFeatureRow());
         attachRemoveHandlers(document);
+        provinceInput.addEventListener('change', () => populateCities(provinceInput.value));
         locateAddressButton.addEventListener('click', geocodeAddress);
         latInput.addEventListener('change', syncMarkerFromInputs);
         lngInput.addEventListener('change', syncMarkerFromInputs);
@@ -471,6 +525,7 @@ if (!$prop) {
             addFeatureRow();
         }
 
+        populateCities(initialProvinceId, initialCityId);
         syncMarkerFromInputs();
 
         document.querySelectorAll('.js-delete-gallery-image').forEach((button) => {

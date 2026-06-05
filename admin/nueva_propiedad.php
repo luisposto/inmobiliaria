@@ -7,6 +7,17 @@ $tipos = obtenerTiposPropiedad();
 $estados = obtenerEstadosPropiedad();
 $iconosCaracteristica = obtenerOpcionesIconosCaracteristica(true);
 $iconoCaracteristicaDefault = array_key_first($iconosCaracteristica) ?: 'check';
+$provincias = obtenerProvincias(false);
+$ciudades = obtenerCiudades(false);
+$ciudadesJson = [];
+foreach ($ciudades as $ciudad) {
+    $ciudadesJson[] = [
+        'id' => (int) $ciudad['id'],
+        'nombre' => (string) $ciudad['nombre'],
+        'provincia_id' => (int) $ciudad['provincia_id'],
+        'provincia_nombre' => (string) $ciudad['provincia_nombre'],
+    ];
+}
 ?>
 
 <!DOCTYPE html>
@@ -74,12 +85,19 @@ $iconoCaracteristicaDefault = array_key_first($iconosCaracteristica) ?: 'check';
                     <input type="text" id="direccion" name="direccion" class="field-input">
                 </div>
                 <div>
-                    <label class="field-label">Ciudad</label>
-                    <input type="text" id="ciudad" name="ciudad" class="field-input">
+                    <label class="field-label">Provincia</label>
+                    <select id="provincia_id" name="provincia_id" class="field-input">
+                        <option value="">Seleccionar provincia</option>
+                        <?php foreach ($provincias as $provincia): ?>
+                            <option value="<?= (int) $provincia['id'] ?>"><?= htmlspecialchars($provincia['nombre']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div>
-                    <label class="field-label">Provincia</label>
-                    <input type="text" id="provincia" name="provincia" class="field-input">
+                    <label class="field-label">Ciudad</label>
+                    <select id="ciudad_id" name="ciudad_id" class="field-input" disabled>
+                        <option value="">Seleccionar ciudad</option>
+                    </select>
                 </div>
                 <div>
                     <label class="field-label">País</label>
@@ -129,6 +147,13 @@ $iconoCaracteristicaDefault = array_key_first($iconosCaracteristica) ?: 'check';
                 </div>
             </div>
 
+            <div class="flex flex-col gap-3">
+                <label class="flex items-center gap-3 text-sm text-slate-700">
+                    <input type="checkbox" id="destacado" name="destacado" value="1" class="rounded border-slate-300">
+                    Marcar como destacada
+                </label>
+            </div>
+
             <section class="surface-card-soft p-5 space-y-4">
                 <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>
@@ -151,18 +176,6 @@ $iconoCaracteristicaDefault = array_key_first($iconosCaracteristica) ?: 'check';
                         <label class="field-label">Galería de fotos</label>
                         <input type="file" name="galeria[]" accept="image/*" multiple class="block w-full text-sm text-slate-500">
                         <p class="mt-2 text-xs text-slate-500">Podés cargar varias fotos para la grilla de la ficha pública.</p>
-                    </div>
-                </div>
-                <div class="mt-4 grid gap-4 md:grid-cols-2">
-                    <div class="space-y-3 md:pt-8">
-                        <label class="flex items-center gap-3 text-sm text-slate-700">
-                            <input type="checkbox" id="cochera" name="cochera" value="1" class="rounded border-slate-300">
-                            Cochera
-                        </label>
-                        <label class="flex items-center gap-3 text-sm text-slate-700">
-                            <input type="checkbox" id="destacado" name="destacado" value="1" class="rounded border-slate-300">
-                            Marcar como destacada
-                        </label>
                     </div>
                 </div>
             </div>
@@ -221,13 +234,14 @@ $iconoCaracteristicaDefault = array_key_first($iconosCaracteristica) ?: 'check';
         const featureTemplate = document.getElementById('feature-template');
         const addFeatureButton = document.getElementById('add-feature');
         const addressInput = document.getElementById('direccion');
-        const cityInput = document.getElementById('ciudad');
-        const provinceInput = document.getElementById('provincia');
+        const cityInput = document.getElementById('ciudad_id');
+        const provinceInput = document.getElementById('provincia_id');
         const countryInput = document.getElementById('pais');
         const latInput = document.getElementById('lat');
         const lngInput = document.getElementById('lng');
         const locateAddressButton = document.getElementById('locate-address');
         const mapStatus = document.getElementById('map-status');
+        const cityOptions = <?= json_encode($ciudadesJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
         const defaultLat = -34.6037;
         const defaultLng = -58.3816;
         const map = L.map('property-location-map').setView([defaultLat, defaultLng], 5);
@@ -264,11 +278,34 @@ $iconoCaracteristicaDefault = array_key_first($iconosCaracteristica) ?: 'check';
             map.setView(position, zoom);
         }
 
+        function getSelectedOptionText(select) {
+            return select?.options?.[select.selectedIndex]?.text?.trim() || '';
+        }
+
+        function populateCities(selectedProvinceId, selectedCityId = '') {
+            const targetCityId = selectedCityId || cityInput.value;
+            cityInput.innerHTML = '<option value="">Seleccionar ciudad</option>';
+
+            const filteredCities = cityOptions.filter((city) => String(city.provincia_id) === String(selectedProvinceId));
+            filteredCities.forEach((city) => {
+                const option = document.createElement('option');
+                option.value = String(city.id);
+                option.textContent = city.nombre;
+                option.selected = String(city.id) === String(targetCityId);
+                cityInput.appendChild(option);
+            });
+
+            cityInput.disabled = filteredCities.length === 0;
+            if (!filteredCities.length) {
+                cityInput.value = '';
+            }
+        }
+
         function buildAddressQuery() {
             return [
                 addressInput.value,
-                cityInput.value,
-                provinceInput.value,
+                getSelectedOptionText(cityInput),
+                getSelectedOptionText(provinceInput),
                 countryInput.value
             ]
                 .map((value) => value.trim())
@@ -344,9 +381,11 @@ $iconoCaracteristicaDefault = array_key_first($iconosCaracteristica) ?: 'check';
 
         addFeatureButton.addEventListener('click', () => addFeatureRow());
         addFeatureRow();
+        provinceInput.addEventListener('change', () => populateCities(provinceInput.value));
         locateAddressButton.addEventListener('click', geocodeAddress);
         latInput.addEventListener('change', syncMarkerFromInputs);
         lngInput.addEventListener('change', syncMarkerFromInputs);
+        populateCities(provinceInput.value);
         syncMarkerFromInputs();
     </script>
 </body>
