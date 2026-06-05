@@ -1,0 +1,299 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-slate-50 text-slate-900 antialiased;
+        font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+        background: #f8fafc;
+    }
+
+    input,
+    select,
+    textarea {
+        @apply transition duration-200;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        @apply outline-none ring-4 ring-emerald-100 border-emerald-400;
+    }
+}
+
+@layer components {
+    .app-header {
+        @apply border-b border-slate-200 bg-white text-slate-900;
+    }
+
+    .app-header-inner {
+        @apply mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:justify-between;
+    }
+
+    .app-brand {
+        @apply flex items-center gap-3 text-slate-900;
+    }
+
+    .app-brand-mark {
+        @apply inline-flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-sm font-extrabold text-white;
+    }
+
+    .app-brand-copy {
+        @apply min-w-0;
+    }
+
+    .app-brand-title {
+        @apply text-sm font-semibold leading-tight md:text-base;
+    }
+
+    .app-brand-subtitle {
+        @apply text-xs text-slate-500;
+    }
+
+    .app-nav {
+        @apply flex w-full flex-wrap items-center gap-2 text-xs font-medium md:w-auto md:text-sm;
+    }
+
+    .app-nav a {
+        @apply flex-1 rounded-lg px-3 py-2 text-center text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 md:flex-none;
+    }
+
+    .app-main {
+        @apply mx-auto max-w-6xl px-4 py-8 md:py-10;
+    }
+
+    .app-main-narrow {
+        @apply mx-auto max-w-4xl px-4 py-8 md:py-10;
+    }
+
+    .admin-layout {
+        @apply mx-auto grid max-w-7xl gap-5 px-4 py-8 md:py-10 xl:grid-cols-[220px,minmax(0,1fr)];
+    }
+
+    .admin-sidebar {
+        @apply h-fit rounded-2xl border border-slate-200 bg-slate-100 p-4 text-slate-900 shadow-sm xl:sticky xl:top-6;
+    }
+
+    .admin-sidebar-title {
+        @apply text-xs font-bold uppercase tracking-[0.18em] text-emerald-700;
+    }
+
+    .admin-sidebar-nav {
+        @apply mt-4 flex flex-col gap-2;
+    }
+
+    .admin-sidebar-link {
+        @apply rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900;
+    }
+
+    .admin-sidebar-link-active {
+        @apply border-emerald-300 bg-emerald-50 text-emerald-900;
+    }
+
+    .admin-content {
+        @apply min-w-0 space-y-6;
+    }
+
+    .admin-split {
+        @apply grid gap-6;
+    }
+
+    .admin-split-form {
+        @apply min-w-0;
+    }
+
+    .admin-split-table {
+        @apply min-w-0;
+    }
+
+    .hero-panel {
+        @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8;
+    }
+
+    .hero-video-shell {
+        @apply relative isolate overflow-hidden rounded-[28px] border border-slate-200 bg-slate-200 shadow-sm;
+        min-height: 520px;
+    }
+
+    .hero-video-media {
+        @apply absolute inset-0 h-full w-full object-cover;
+    }
+
+    .hero-video-overlay {
+        @apply absolute inset-0 bg-slate-900/35;
+        background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.58), rgba(148, 163, 184, 0.2));
+    }
+
+    .hero-video-grid {
+        @apply relative z-10 grid min-h-[520px] items-center gap-6 p-6 md:grid-cols-[3fr,2fr] md:p-8;
+    }
+
+    .hero-video-content {
+        @apply flex flex-col justify-end self-stretch;
+    }
+
+    .hero-video-content .eyebrow,
+    .hero-video-eyebrow {
+        @apply mb-3 inline-flex w-fit rounded-md border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white;
+    }
+
+    .hero-video-content .section-heading,
+    .hero-video-title {
+        @apply text-3xl font-extrabold tracking-tight text-white md:text-5xl;
+    }
+
+    .hero-video-content .section-copy,
+    .hero-video-copy {
+        @apply text-sm leading-6 text-slate-100 md:text-base;
+    }
+
+    .hero-video-action {
+        @apply border-white/20 bg-white/10 text-white hover:bg-white/20;
+    }
+
+    .hero-search-card {
+        @apply border-white/10 shadow-2xl backdrop-blur-sm;
+    }
+
+    .surface-card {
+        @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+    }
+
+    .surface-card-soft {
+        @apply rounded-2xl border border-slate-200 bg-slate-50 shadow-sm;
+    }
+
+    .metric-card {
+        @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm;
+    }
+
+    .section-heading {
+        @apply text-2xl font-extrabold tracking-tight text-slate-950 md:text-3xl;
+    }
+
+    .section-copy {
+        @apply text-sm leading-6 text-slate-600 md:text-base;
+    }
+
+    .eyebrow {
+        @apply mb-3 inline-flex rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-600;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center rounded-lg bg-slate-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-600;
+    }
+
+    .btn-accent {
+        @apply inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50;
+    }
+
+    .btn-danger {
+        @apply inline-flex items-center justify-center rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 transition hover:bg-red-100;
+    }
+
+    .field-input {
+        @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-800 shadow-sm placeholder:text-slate-400;
+    }
+
+    .field-label {
+        @apply mb-1.5 block text-sm font-semibold text-slate-700;
+    }
+
+    .listing-card {
+        @apply overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md;
+    }
+
+    .listing-image {
+        @apply h-48 w-full object-cover;
+    }
+
+    .listing-placeholder {
+        @apply flex h-48 w-full items-center justify-center bg-slate-200 text-xs font-medium text-slate-500;
+    }
+
+    .pill {
+        @apply inline-flex items-center rounded-md border px-2.5 py-1 text-[11px] font-semibold;
+    }
+
+    .table-shell {
+        @apply overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm;
+    }
+
+    .table-shell table {
+        @apply w-full border-collapse;
+    }
+
+    .table-compact {
+        table-layout: fixed;
+    }
+
+    .table-shell thead {
+        @apply bg-slate-50/90 text-left text-xs uppercase tracking-[0.18em] text-slate-500;
+    }
+
+    .table-shell th {
+        @apply px-4 py-3 font-semibold;
+    }
+
+    .table-shell td {
+        @apply border-t border-slate-100 px-4 py-3 align-middle text-sm;
+    }
+
+    .table-compact th,
+    .table-compact td {
+        @apply px-3;
+    }
+
+    .table-compact th:first-child,
+    .table-compact td:first-child {
+        width: 72px;
+    }
+
+    .table-compact th:nth-child(2),
+    .table-compact td:nth-child(2) {
+        width: 120px;
+    }
+
+    .table-compact th:nth-child(3),
+    .table-compact td:nth-child(3) {
+        width: 84px;
+    }
+
+    .table-compact th:nth-child(4),
+    .table-compact td:nth-child(4) {
+        width: 56px;
+    }
+
+    .table-compact th:nth-child(5),
+    .table-compact td:nth-child(5) {
+        width: 96px;
+    }
+
+    .table-compact th:last-child,
+    .table-compact td:last-child {
+        width: 180px;
+    }
+
+    .table-shell tbody tr {
+        @apply transition hover:bg-slate-50/80;
+    }
+
+    .admin-form {
+        @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8;
+    }
+
+    .app-footer {
+        @apply mt-12 border-t border-slate-200 bg-slate-100 text-slate-600;
+    }
+
+    .app-footer-inner {
+        @apply mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-xs md:flex-row md:items-center md:justify-between md:text-sm;
+    }
+}
