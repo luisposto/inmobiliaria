@@ -328,6 +328,11 @@ body > .w-full.max-w-md.rounded-2xl {
     box-shadow: none;
 }
 
+.hero-search-card select option {
+    background-color: var(--theme-surface-strong);
+    color: var(--theme-text);
+}
+
 .hero-search-card .field-input::placeholder {
     color: rgba(255, 255, 255, 0.46);
 }
