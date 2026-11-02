@@ -1,0 +1,2 @@
+Proyecto: http://localhost:8010/public/
+Administración: http://localhost:8010/admin/login.php

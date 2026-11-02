@@ -4,7 +4,7 @@ $DB_HOST = '127.0.0.1';
 $DB_PORT = '3307';
 $DB_NAME = 'inmobiliaria';
 $DB_USER = 'root';
-$DB_PASS = '';
+$DB_PASS = (json_decode(file_get_contents('C:/xampp/security-private/database.json'), true)['root_password']);
 
 $dsn = "mysql:host=$DB_HOST;port=$DB_PORT;dbname=$DB_NAME;charset=utf8mb4";
 

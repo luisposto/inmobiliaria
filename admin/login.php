@@ -6,8 +6,8 @@ if (isset($_SESSION['usuario_id'])) {
     exit;
 }
 $error = $_GET['error'] ?? '';
-$tailwindHref = '/inmobiliaria/public/css/tailwind.css?v=' . (is_file(__DIR__ . '/../public/css/tailwind.css') ? filemtime(__DIR__ . '/../public/css/tailwind.css') : time());
-$themeOverridesHref = '/inmobiliaria/public/css/theme-overrides.css?v=' . (is_file(__DIR__ . '/../public/css/theme-overrides.css') ? filemtime(__DIR__ . '/../public/css/theme-overrides.css') : time());
+$tailwindHref = '../public/css/tailwind.css?v=' . (is_file(__DIR__ . '/../public/css/tailwind.css') ? filemtime(__DIR__ . '/../public/css/tailwind.css') : time());
+$themeOverridesHref = '../public/css/theme-overrides.css?v=' . (is_file(__DIR__ . '/../public/css/theme-overrides.css') ? filemtime(__DIR__ . '/../public/css/theme-overrides.css') : time());
 ?>
 <!DOCTYPE html>
 <html lang="es">
