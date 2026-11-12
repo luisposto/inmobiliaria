@@ -1,2 +1,2 @@
-Proyecto: http://localhost:8010/public/
-Administración: http://localhost:8010/admin/login.php
+Proyecto: http://localhost:8080/inmobiliaria/public/
+Administración: http://localhost:8080/inmobiliaria/admin/login.php

@@ -26,7 +26,6 @@ $imagenPrincipal = !empty($galeria[0]['archivo']) ? 'img/' . rawurlencode($galer
 $precioArs = '$' . number_format((float)$prop['precio'], 0, ',', '.');
 $precioUsd = !empty($prop['precio_usd']) ? 'U$S ' . number_format((float)$prop['precio_usd'], 0, ',', '.') : '';
 $precioPrincipal = $precioUsd !== '' ? $precioUsd : $precioArs;
-$precioSecundario = $precioUsd !== '' ? $precioArs : '';
 $superficie = !empty($prop['superficie']) ? (int)$prop['superficie'] . ' m2 totales' : 'Superficie no informada';
 $ambientes = !empty($prop['ambientes']) ? (int)$prop['ambientes'] . ' ambientes' : 'Ambientes no informados';
 $banios = !empty($prop['banios']) ? (int)$prop['banios'] . ' baño' . ((int)$prop['banios'] !== 1 ? 's' : '') : 'Baños no informados';
@@ -315,8 +314,10 @@ if ($estadoNombre === 'Disponible') {
         }
 
         .detail-badge-sale {
-            background: rgba(16, 185, 129, 0.18);
-            color: #d7ffea;
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
 
         .detail-badge-rent {
@@ -561,6 +562,8 @@ if ($estadoNombre === 'Disponible') {
 
         .feature-card {
             display: flex;
+            min-width: 0;
+            container-type: inline-size;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -585,15 +588,20 @@ if ($estadoNombre === 'Disponible') {
         }
 
         .feature-card strong {
+            max-width: 100%;
+            overflow-wrap: anywhere;
             font-size: 14px;
             font-weight: 700;
             color: #172235;
         }
 
         .feature-card span {
-            font-size: 24px;
+            max-width: 100%;
+            font-size: 20px;
+            font-size: clamp(14px, 20cqw, 24px);
             line-height: 1.1;
             color: #0f172a;
+            overflow-wrap: anywhere;
         }
 
         .map-box {
@@ -997,9 +1005,6 @@ if ($estadoNombre === 'Disponible') {
                 <div class="price-row">
                     <div class="price-stack">
                         <strong><?= htmlspecialchars($precioPrincipal) ?></strong>
-                        <?php if ($precioSecundario !== ''): ?>
-                            <span><?= htmlspecialchars($precioSecundario) ?></span>
-                        <?php endif; ?>
                     </div>
                     <div>
                         <h2 class="section-title"><?= htmlspecialchars($tipoNombre) ?> en <?= htmlspecialchars($operacionNombre) ?></h2>
@@ -1071,9 +1076,6 @@ if ($estadoNombre === 'Disponible') {
             <div class="sidebar-stick">
                 <section class="mini-card">
                     <p class="contact-price"><?= htmlspecialchars($precioPrincipal) ?></p>
-                    <?php if ($precioSecundario !== ''): ?>
-                        <p class="contact-subprice"><?= htmlspecialchars($precioSecundario) ?></p>
-                    <?php endif; ?>
                     <div class="agency-box">
                         <div class="agency-mark">IA</div>
                         <div class="agency-copy">

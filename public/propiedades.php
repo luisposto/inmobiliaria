@@ -124,9 +124,6 @@ $queryString = http_build_query($filtros);
                                     <p class="text-sm font-bold text-emerald-700">
                                         <?php if (!empty($p['precio_usd'])): ?>
                                             U$S <?= number_format($p['precio_usd'], 0, ',', '.') ?>
-                                            <span class="block text-[11px] font-medium text-slate-500">
-                                                $<?= number_format($p['precio'], 0, ',', '.') ?>
-                                            </span>
                                         <?php else: ?>
                                             $<?= number_format($p['precio'], 0, ',', '.') ?>
                                         <?php endif; ?>
@@ -159,5 +156,6 @@ $queryString = http_build_query($filtros);
         <p>© <?= date('Y'); ?> Inmobiliaria Argentina. Todos los derechos reservados.</p>
     </div>
 </footer>
+<script src="<?= htmlspecialchars(publicAssetUrl('js/price-controls.js')) ?>" defer></script>
 </body>
 </html>

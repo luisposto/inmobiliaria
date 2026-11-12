@@ -173,13 +173,6 @@ $socialLinks = [
                                     Ver detalle
                                 </a>
                             </div>
-                            <p class="text-sm font-bold text-emerald-700">
-                                <?php if (!empty($p['precio_usd'])): ?>
-                                    <span class="block text-[11px] text-slate-500">
-                                        $<?= number_format($p['precio'], 0, ',', '.') ?>
-                                    </span>
-                                <?php endif; ?>
-                            </p>
                         </div>
                     </article>
                 <?php endforeach; ?>
@@ -192,13 +185,13 @@ $socialLinks = [
         <div class="absolute right-0 top-24 h-52 w-52 rounded-full bg-emerald-400/10 blur-3xl"></div>
         <div class="absolute -left-16 bottom-0 h-48 w-48 rounded-full bg-cyan-300/10 blur-3xl"></div>
 
-        <div class="relative px-6 py-10 md:px-12 md:py-12">
+        <div class="relative px-6 py-8 md:px-10 md:py-8">
             <div class="max-w-3xl space-y-4">
-                <h2 class="max-w-2xl text-3xl font-extrabold tracking-tight text-slate-950 md:text-5xl">
+                <h2 class="max-w-2xl text-3xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
                     Nuestro equipo
                 </h2>
-                <div class="max-w-3xl space-y-4 text-sm leading-7 text-slate-600 md:text-base">
-                    <p class="text-lg font-semibold text-slate-900 md:text-2xl">
+                <div class="max-w-3xl space-y-3 text-sm leading-6 text-slate-600">
+                    <p class="text-lg font-semibold text-slate-900 md:text-xl">
                        Acompanamiento cercano en cada etapa
                     </p>
                     <p>
@@ -210,7 +203,7 @@ $socialLinks = [
                 </div>
             </div>
 
-            <div class="mt-10 grid gap-6 md:grid-cols-3">
+            <div class="mt-6 grid gap-5 md:grid-cols-3">
                 <?php foreach ($staffItems as $item): ?>
                     <?php
                     $fotoUrl = staffImagenUrl($item['imagen'] ?? null);
@@ -227,18 +220,18 @@ $socialLinks = [
                                 <img
                                     src="<?= htmlspecialchars($fotoUrl) ?>"
                                     alt="<?= htmlspecialchars(($item['nombre'] ?? 'Staff') . ', ' . ($item['puesto'] ?? 'integrante del staff')) ?>"
-                                    class="h-80 w-full object-cover grayscale transition duration-500 group-hover:scale-[1.03] group-hover:grayscale-0"
+                                    class="h-64 w-full object-cover object-top grayscale transition duration-500 group-hover:scale-[1.03] group-hover:grayscale-0"
                                 >
                             <?php else: ?>
-                                <div class="flex h-80 w-full items-center justify-center bg-slate-100 text-sm font-semibold text-slate-400">Sin foto</div>
+                                <div class="flex h-64 w-full items-center justify-center bg-slate-100 text-sm font-semibold text-slate-400">Sin foto</div>
                             <?php endif; ?>
                         </div>
-                        <div class="space-y-4 p-6">
+                        <div class="space-y-3 p-5">
                             <div class="space-y-2">
                                 <p class="text-xs font-bold uppercase tracking-[0.24em] text-lime-700"><?= htmlspecialchars($item['puesto']) ?></p>
-                                <h3 class="text-2xl font-extrabold tracking-tight text-slate-950"><?= htmlspecialchars($item['nombre']) ?></h3>
+                                <h3 class="text-xl font-extrabold tracking-tight text-slate-950"><?= htmlspecialchars($item['nombre']) ?></h3>
                             </div>
-                            <p class="text-sm leading-7 text-slate-600">
+                            <p class="text-sm leading-6 text-slate-600">
                                 <?= htmlspecialchars($item['descripcion']) ?>
                             </p>
                             <?php if (array_filter($redes)): ?>
@@ -330,5 +323,6 @@ $socialLinks = [
         </div>
     </div>
 </footer>
+<script src="<?= htmlspecialchars(publicAssetUrl('js/price-controls.js')) ?>" defer></script>
 </body>
 </html>

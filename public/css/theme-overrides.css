@@ -328,6 +328,85 @@ body > .w-full.max-w-md.rounded-2xl {
     box-shadow: none;
 }
 
+.price-control {
+    position: relative;
+    min-width: 0;
+}
+
+.price-control input[type="number"] {
+    width: 100%;
+    padding-right: 2.75rem;
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.price-control input::-webkit-inner-spin-button,
+.price-control input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.price-control-actions {
+    position: absolute;
+    inset: 4px 4px 4px auto;
+    display: grid;
+    width: 2rem;
+    grid-template-rows: 1fr 1fr;
+    overflow: hidden;
+    border: 1px solid var(--theme-border-strong);
+    border-radius: 0.5rem;
+    background: var(--theme-surface-alt);
+    color: var(--theme-brand-600);
+}
+
+.price-control-actions button {
+    display: grid;
+    place-items: center;
+    padding: 0;
+    min-height: 16px;
+    cursor: pointer;
+    background: transparent;
+    color: inherit;
+    transition: background 150ms ease, color 150ms ease;
+}
+
+.price-control-actions button + button {
+    border-top: 1px solid var(--theme-border-strong);
+}
+
+.price-control-actions button:hover {
+    background: var(--theme-brand-100);
+}
+
+.price-control-actions button:focus-visible {
+    outline: 2px solid var(--theme-accent-500);
+    outline-offset: -2px;
+}
+
+.price-control-actions svg {
+    width: 13px;
+    height: 13px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.hero-search-card .price-control-actions {
+    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.06);
+    color: #f3d7ac;
+}
+
+.hero-search-card .price-control-actions button + button {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.hero-search-card .price-control-actions button:hover {
+    background: rgba(243, 215, 172, 0.18);
+}
+
 .hero-search-card select option {
     background-color: var(--theme-surface-strong);
     color: var(--theme-text);
